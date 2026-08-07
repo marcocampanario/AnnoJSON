@@ -52,3 +52,5 @@ biocViews:
     VariantAnnotation
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.0
+URL: https://github.com/marcocampanario/AnnoJSON
+BugReports: https://github.com/marcocampanario/AnnoJSON/issues
