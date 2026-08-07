@@ -1,0 +1,8 @@
+{"header":{"nirvanaVersion":"3.18.1","genomeAssembly":"GRCh38"},"positions":[
+{"chromosome":"chr1","position":69805,"refAllele":"G","altAlleles":["T"],"vcfInfo":{"AF":[0.1]},"quality":99.1,"filters":"PASS","cytogeneticBand":"1p36.33","samples":[{"genotype":"0/1"}],"variants":[{"vid":"1-69805-G-T","gnomad":{"allAf":0.000118},"gnomad-exome":{"allAf":0.000197}}]},
+{"chromosome":"chr2","position":100,"refAllele":"A","altAlleles":["C","G"],"vcfInfo":{},"quality":50,"filters":["LowQual","StrandBias"],"samples":[],"variants":[]}
+],"genes":[
+{"name":"OR4F5","ensemblGeneId":"ENSG00000186092","hgncId":14825,"ncbiGeneId":"79501","gnomAD":{"pLI":0.01},"omim":[{"mimNumber":615303}],"clingenGeneValidity":[],"clingenDosageSensitivityMap":[],"cosmic":[]},
+{"name":"GENE2","ensemblGeneId":"ENSG00000200002","hgncId":2,"ncbiGeneId":"2"}
+]}
+

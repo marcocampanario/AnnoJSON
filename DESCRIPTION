@@ -1,0 +1,54 @@
+Package: AnnoJSON
+Type: Package
+Title: Import Line-Oriented Genetic Variant Annotation JSON
+Version: 0.99.0
+Authors@R:
+    c(
+        person(
+            given = "Marco",
+            family = "Campanário",
+            email = "macscampanario@gmail.com",
+            role = c("aut", "cre")
+        ),
+        person(
+            given = "Alysson Henrique",
+            family = "Urbanski",
+            role = "aut"
+        )
+    )
+Description: Imports line-oriented JavaScript Object Notation (JSON)
+    files produced by Illumina Connected Annotations variant
+    annotation workflow (former Nirvana). It preserves nested position- and gene-level
+    annotations while creating tibbles used by the aPRoVAR analysis workflow.
+    Sequential and multisession parsing, compressed RDS input and output, and
+    conversion of genomic positions to GenomicRanges objects are provided.
+License: Artistic-2.0
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+SystemRequirements: pigz (optional)
+Depends:
+    R (>= 4.3.0)
+Imports:
+    furrr,
+    future,
+    GenomicRanges,
+    IRanges,
+    jsonlite,
+    progressr,
+    S4Vectors,
+    tibble
+Suggests:
+    BiocCheck,
+    BiocStyle,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+biocViews:
+    DataImport,
+    Genetics,
+    Sequencing,
+    Software,
+    VariantAnnotation
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

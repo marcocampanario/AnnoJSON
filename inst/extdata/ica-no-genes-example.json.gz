@@ -1,0 +1,4 @@
+{"header":{"nirvanaVersion":"3.18.1","genomeAssembly":"GRCh38"},"positions":[
+{"chromosome":"chr1","position":101,"refAllele":"C","altAlleles":["T"],"quality":40,"filters":"PASS"}
+]}
+

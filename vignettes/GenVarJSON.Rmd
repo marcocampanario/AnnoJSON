@@ -1,0 +1,109 @@
+---
+title: "Importing Nirvana JSON annotations with GenVarJSON"
+author: "Alysson Henrique Urbanski and Marco Antonio Campanário"
+date: "`r Sys.Date()`"
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Importing Nirvana JSON annotations with GenVarJSON}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, message=FALSE}
+library(GenVarJSON)
+```
+
+# Overview
+
+Nirvana and Illumina Connected Annotations JSON output is line-oriented:
+the first line contains the header and opens the position array, each
+subsequent position occupies one line, and an optional top-level gene array
+follows the position array. `GenVarJSON` uses this organization to avoid
+parsing the complete document as one in-memory JSON object.
+
+The package preserves the output structure used by the aPRoVAR
+`read_json.R` workflow. It does not join records, normalize variant keys, or
+change row order.
+
+# Read the three raw sections
+
+```{r sections}
+example_file <- system.file(
+    "extdata",
+    "nirvana-example.json",
+    package = "GenVarJSON"
+)
+
+resultados_ultra_v2 <- read_nirvana_sections(
+    example_file,
+    verbose = FALSE
+)
+
+names(resultados_ultra_v2)
+lengths(resultados_ultra_v2)
+```
+
+The result contains one header JSON string, a character vector of position
+records, and a character vector of gene records. A file without the
+top-level gene section returns `character(0)` for `genes`.
+
+# Parse the records
+
+```{r parse}
+header <- parse_nirvana_header(resultados_ultra_v2$header)
+
+positions_list <- parse_nirvana_records(
+    resultados_ultra_v2$positions,
+    workers = 1L,
+    progress = FALSE
+)
+
+genes_list <- parse_nirvana_records(
+    resultados_ultra_v2$genes,
+    workers = 1L,
+    progress = FALSE
+)
+```
+
+For a large local file, set `workers` to the number of independent R
+processes that is appropriate for the available memory. The package restores
+the previous `future` plan after each parallel call.
+
+# Create the original aPRoVAR tibbles
+
+```{r tibbles}
+tbl_inicial <- nirvana_positions_tibble(positions_list)
+tbl_genes <- nirvana_genes_tibble(genes_list)
+
+tbl_inicial
+tbl_genes
+```
+
+Nested objects remain list-columns. In particular, variant-level annotation
+databases such as `gnomad` and `gnomad-exome` are not combined or discarded.
+
+# Run the complete import
+
+```{r one-call}
+result <- read_nirvana_json(
+    example_file,
+    workers = 1L,
+    progress = FALSE,
+    verbose = FALSE
+)
+
+names(result)
+```
+
+# Convert positions to GRanges
+
+```{r granges}
+ranges <- nirvana_positions_granges(result$tbl_inicial)
+ranges
+```
+
+The conversion is an additional representation. It does not modify
+`tbl_inicial`.
+
