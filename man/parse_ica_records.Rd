@@ -9,31 +9,42 @@ parse_ica_records(
   workers = 1L,
   progress = interactive(),
   simplifyVector = TRUE,
-  flatten = FALSE
+  flatten = FALSE,
+  BPPARAM = NULL
 )
 }
 \arguments{
 \item{records}{A character vector of JSON records, such as the
-\code{positions} or \code{genes} element returned by
-\code{\link[=read_ica_sections]{read_ica_sections()}}.}
+\code{positions} or \code{genes} element returned by \code{\link[=read_ica_sections]{read_ica_sections()}}.}
 
-\item{workers}{Number of R processes. Use \code{1L} for sequential parsing.}
+\item{workers}{Number of R processes when \code{BPPARAM} is \code{NULL}. A value of
+\code{1L} selects sequential evaluation; larger values create a socket
+backend.}
 
-\item{progress}{Whether to display parsing progress.}
+\item{progress}{Whether to enable the backend progress bar when
+\code{BPPARAM} is \code{NULL}.}
 
 \item{simplifyVector}{Passed to \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}.}
 
 \item{flatten}{Passed to \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}.}
+
+\item{BPPARAM}{An optional \code{BiocParallelParam} object. When supplied,
+\code{workers} and \code{progress} must be omitted.}
 }
 \value{
-A list with one parsed R object per input record and in the same
-order as \code{records}.
+A list containing one parsed object per input record, in the
+same order as \code{records}.
 }
 \description{
 Converts a character vector containing one JSON object per element into
-a list of R objects. A single worker uses sequential parsing. Two or more
-workers use an isolated \code{future::multisession} plan, and the previous
-future plan is restored when parsing finishes.
+a list of R objects. Parsing is performed through BiocParallel while
+preserving input order.
+}
+\details{
+The legacy \code{workers} and \code{progress} arguments construct either a
+\code{\link[BiocParallel:SerialParam]{BiocParallel::SerialParam()}} or a socket-based
+\code{\link[BiocParallel:SnowParam]{BiocParallel::SnowParam()}}. Alternatively, users may supply an explicit
+BiocParallel backend through \code{BPPARAM}.
 }
 \examples{
 example_file <- system.file(
@@ -43,7 +54,7 @@ sections <- read_ica_sections(example_file, verbose = FALSE)
 positions <- parse_ica_records(
     sections$positions,
     workers = 1L,
-    progress = FALSE
+    progress = TRUE
 )
 
 }

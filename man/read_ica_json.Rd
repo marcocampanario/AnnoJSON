@@ -11,7 +11,8 @@ read_ica_json(
   simplifyVector = TRUE,
   flatten = FALSE,
   verbose = TRUE,
-  encoding = "UTF-8"
+  encoding = "UTF-8",
+  BPPARAM = NULL
 )
 }
 \arguments{

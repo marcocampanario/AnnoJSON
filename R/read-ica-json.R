@@ -51,47 +51,66 @@
 #' [ica_positions_tibble()], and [ica_genes_tibble()].
 #'
 #' @export
-read_ica_json <- function(path, workers = 1L,
-                              progress = interactive(),
-                              simplifyVector = TRUE,
-                              flatten = FALSE,
-                              verbose = TRUE,
-                              encoding = "UTF-8") {
-    sections <- read_ica_sections(
-        path = path,
-        verbose = verbose,
-        encoding = encoding
-    )
+read_ica_json <- function(
+    path,
+    workers = 1L,
+    progress = interactive(),
+    simplifyVector = TRUE,
+    flatten = FALSE,
+    verbose = TRUE,
+    encoding = "UTF-8",
+    BPPARAM = NULL
+) {
+  workers_supplied <- !missing(workers)
+  progress_supplied <- !missing(progress)
 
-    header <- parse_ica_header(
-        sections$header,
-        simplifyVector = simplifyVector,
-        flatten = flatten
-    )
-    positions <- parse_ica_records(
-        sections$positions,
-        workers = workers,
-        progress = progress,
-        simplifyVector = simplifyVector,
-        flatten = flatten
-    )
-    genes <- parse_ica_records(
-        sections$genes,
-        workers = workers,
-        progress = progress,
-        simplifyVector = simplifyVector,
-        flatten = flatten
-    )
+  .check_parallel_arguments(
+    BPPARAM = BPPARAM,
+    workers_supplied = workers_supplied,
+    progress_supplied = progress_supplied
+  )
 
-    tbl_positions <- ica_positions_tibble(positions)
-    tbl_genes <- ica_genes_tibble(genes)
+  BPPARAM <- .resolve_ica_bpparam(
+    BPPARAM = BPPARAM,
+    workers = workers,
+    progress = progress
+  )
 
-    list(
-        header = header,
-        positions = positions,
-        genes = genes,
-        tbl_positions = tbl_positions,
-        tbl_genes = tbl_genes
-    )
+  sections <- read_ica_sections(
+    path = path,
+    verbose = verbose,
+    encoding = encoding
+  )
+
+  header <- parse_ica_header(
+    sections$header,
+    simplifyVector = simplifyVector,
+    flatten = flatten
+  )
+
+  positions <- parse_ica_records(
+    sections$positions,
+    simplifyVector = simplifyVector,
+    flatten = flatten,
+    BPPARAM = BPPARAM
+  )
+
+  genes <- parse_ica_records(
+    sections$genes,
+    simplifyVector = simplifyVector,
+    flatten = flatten,
+    BPPARAM = BPPARAM
+  )
+
+  tbl_positions <- ica_positions_tibble(positions)
+  tbl_genes <- ica_genes_tibble(genes)
+
+  list(
+    header = header,
+    positions = positions,
+    genes = genes,
+    tbl_positions = tbl_positions,
+    tbl_genes = tbl_genes
+  )
 }
 

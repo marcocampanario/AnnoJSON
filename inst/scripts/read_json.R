@@ -1,10 +1,10 @@
 ##### read_json.R #####
 # Alysson Henrique Urbanski & Marco Antonio Campanário @ Fiocruz Paraná,
 # 2026 Jul.
-# Function-based parsing and processing of Nirvana JSON annotations.
+# Function-based parsing and processing of ICA JSON annotations.
 #
 # This script keeps the block order and central object names used in the
-# original aPRoVAR workflow. Run it after installing GenVarJSON:
+# original aPRoVAR workflow. Run it after installing AnnoJSON:
 #
 # Rscript read_json.R input.json.gz output_directory output_prefix [workers]
 
@@ -33,6 +33,10 @@ workers <- if (length(arguments) >= 4L) {
 # -------------------------------------------------------------------------
 # 1. Read the header, position records, and gene records as JSON strings.
 # -------------------------------------------------------------------------
+
+json_file <- system.file("extdata", "ica-example.json.gz", package = "AnnoJSON")
+output_directory <- "C:/Users/Marco Campanário/Desktop/AnnoJSON_07082026/AnnoJSON/AnnoJSON/inst/extdata/"
+output_prefix <- "TOYDATA-P"
 
 execution_time <- system.time({
     parsed_json <- read_ica_sections(json_file)
@@ -116,7 +120,7 @@ parsed_results <- list(
     tbl_genes = tbl_genes
 )
 
-output_files <- write_nirvana_results(
+output_files <- write_ica_results(
     parsed_results,
     output_dir = output_directory,
     prefix = output_prefix,

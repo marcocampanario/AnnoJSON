@@ -11,6 +11,14 @@ reusable, documented functions. It preserves nested annotations and the
 original position- and gene-tibble schemas while adding controlled
 parallelism and Bioconductor interoperability.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/marcocampanario/AnnoJSON}
+  \item Report bugs at \url{https://github.com/marcocampanario/AnnoJSON/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Marco Campanário \email{macscampanario@gmail.com}
 

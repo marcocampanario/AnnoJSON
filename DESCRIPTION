@@ -29,12 +29,11 @@ SystemRequirements: pigz (optional)
 Depends:
     R (>= 4.3.0)
 Imports:
-    furrr,
-    future,
+    BiocParallel,
     GenomicRanges,
     IRanges,
     jsonlite,
-    progressr,
+    methods,
     S4Vectors,
     tibble
 Suggests:

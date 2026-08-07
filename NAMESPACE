@@ -11,23 +11,17 @@ export(read_ica_sections)
 export(read_rds_parallel)
 export(write_ica_results)
 export(write_rds_parallel)
+importFrom(BiocParallel,
+  SerialParam,
+  SnowParam,
+  bplapply
+)
 importFrom(GenomicRanges,GRanges)
 importFrom(IRanges,IRanges)
 importFrom(S4Vectors,
   DataFrame,
   mcols
 )
-importFrom(furrr,
-  furrr_options,
-  future_map
-)
-importFrom(future,
-  multisession,
-  plan
-)
 importFrom(jsonlite,fromJSON)
-importFrom(progressr,
-  progressor,
-  with_progress
-)
+importFrom(methods,is)
 importFrom(tibble,tibble)
