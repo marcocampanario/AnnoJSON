@@ -33,8 +33,8 @@ library(AnnoJSON)
 ##
 
 usethis::git_sitrep()
-gert::git_config_global_set("user.name", "Jacques")
-gert ::git_config_global_set("user.email", "jacquesserizay@gmail.com")
+gert::git_config_global_set("user.name", "Marco")
+gert ::git_config_global_set("user.email", "macscampanario@gmail.com")
 usethis ::git_vaccinate()
 usethis ::use_git()
 usethis ::use_git_ignore("*.Rproj")
