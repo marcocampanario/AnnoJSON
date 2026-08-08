@@ -134,7 +134,7 @@ print(output_files)
 # -------------------------------------------------------------------------
 
 example_file <- system.file("extdata",
-                            "ica-example.json.gz",
+                            "subset_100_af.json.gz",
                             package = "AnnoJSON")
 
 parsed_results_master <- read_ica_json(
@@ -147,7 +147,19 @@ parsed_results_master <- read_ica_json(
 output_files_master <- write_ica_results(
   parsed_results,
   output_dir = output_directory,
-  prefix = output_prefix,
+  prefix = "TOYDATA2",
   threads = workers,
   overwrite = T
 )
+
+ICAPositions_object <- ICAPositions(
+  positions = parsed_results_master$tbl_positions,
+  header = parsed_results_master$header,
+  metadata = list(
+    source = "ICA JSON",
+    package = "AnnoJSON"
+  )
+)
+
+View(ICAPositions_object@positions@listData)
+show(ICAPositions_object)
