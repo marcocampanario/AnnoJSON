@@ -160,6 +160,3 @@ ICAPositions_object <- ICAPositions(
     package = "AnnoJSON"
   )
 )
-
-View(ICAPositions_object@positions@listData)
-show(ICAPositions_object)

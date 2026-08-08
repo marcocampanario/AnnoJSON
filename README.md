@@ -1,11 +1,10 @@
-# GenVarJSON
+# AnnoJSON
 
-`GenVarJSON` is a Bioconductor-oriented R package for importing the
-line-oriented JSON output produced by Nirvana or Illumina Connected
-Annotations. It refactors the aPRoVAR `read_json.R` script into reusable
-functions while preserving the original data structures.
+`AnnoJSON` is a Bioconductor R package for importing the
+JSON output produced by Illumina Connected Annotations
+(former Nirvana).
 
-The package name is provisional and should be confirmed before Bioconductor
+This package name is provisional and should be confirmed before Bioconductor
 submission.
 
 ## Preserved structures
@@ -16,7 +15,7 @@ submission.
 | `header` | `parse_nirvana_header()` | Parsed header object |
 | `positions_list` | `parse_nirvana_records()` | Ordered list of position records |
 | `genes_list` | `parse_nirvana_records()` | Ordered list of gene records |
-| `tbl_inicial` | `nirvana_positions_tibble()` | Ten original position columns |
+| `tbl_positions` | `nirvana_positions_tibble()` | Ten original position columns |
 | `tbl_genes` | `nirvana_genes_tibble()` | Nine original gene columns |
 
 No join, key normalization, or row reordering is performed. Position and gene
@@ -25,24 +24,24 @@ records remain in input order.
 ## One-call workflow
 
 ```r
-library(GenVarJSON)
+library(AnnoJSON)
 
-result <- read_nirvana_json(
-    "annotations.json.gz",
+result <- read_ica_json(
+    "subset_100_af.json.gz",
     workers = 8L
 )
 
 header <- result$header
 positions_list <- result$positions
 genes_list <- result$genes
-tbl_inicial <- result$tbl_inicial
+tbl_positions <- result$tbl_positions
 tbl_genes <- result$tbl_genes
 ```
 
-`read_nirvana_json()` returns exactly these five named elements:
+`read_ica_json()` returns exactly these five named elements:
 
 ```r
-c("header", "positions", "genes", "tbl_inicial", "tbl_genes")
+c("header", "positions", "genes", "tbl_positions", "tbl_genes")
 ```
 
 ## Block-by-block workflow
@@ -50,34 +49,34 @@ c("header", "positions", "genes", "tbl_inicial", "tbl_genes")
 This form follows the original script:
 
 ```r
-resultados_ultra_v2 <- read_anno_json_ultra_fast_v2(
-    "annotations.json.gz"
+result <- read_ica_sections(
+    "subset_100_af.json.gz"
 )
 
-positions_list <- parse_nirvana_records(
-    resultados_ultra_v2$positions,
+positions_list <- parse_ica_records(
+    result$positions,
     workers = 8L
 )
 
-genes_list <- parse_nirvana_records(
-    resultados_ultra_v2$genes,
+genes_list <- parse_ica_records(
+    result$genes,
     workers = 8L
 )
 
-header <- parse_nirvana_header(resultados_ultra_v2$header)
-tbl_inicial <- nirvana_positions_tibble(positions_list)
-tbl_genes <- nirvana_genes_tibble(genes_list)
+header <- parse_ica_header(result$header)
+tbl_positions <- ica_positions_tibble(positions_list)
+tbl_genes <- ica_genes_tibble(genes_list)
 ```
 
 A complete compatibility script is installed at:
 
 ```r
-system.file("scripts", "read_json.R", package = "GenVarJSON")
+system.file("scripts", "read_json.R", package = "AnnoJSON")
 ```
 
 ## Output schemas
 
-`tbl_inicial` contains, in order:
+`tbl_positions` contains, in order:
 
 ```text
 chromosome, position, refAllele, altAlleles, vcfInfo, quality,
@@ -100,19 +99,34 @@ The original tibble remains unchanged. A separate conversion function creates
 a `GRanges` object when a Bioconductor genomic-range representation is useful:
 
 ```r
-ranges <- nirvana_positions_granges(tbl_inicial)
+ranges <- ica_positions_granges(tbl_positions)
+```
+
+## ICAPositions class
+
+```{r granges}
+ICAPositions_object <- ICAPositions(
+  positions = parsed_results_master$tbl_positions,
+  header = parsed_results_master$header,
+  metadata = list(
+    source = "ICA JSON",
+    package = "AnnoJSON"
+  )
+)
+
+show(ICAPositions_object)
 ```
 
 ## Compressed RDS files
 
 ```r
 write_rds_parallel(
-    tbl_inicial,
-    "tbl_inicial.rds.gz",
+    tbl_positions,
+    "tbl_positions.rds.gz",
     threads = 8L
 )
 
-tbl_inicial <- read_rds_parallel("tbl_inicial.rds.gz")
+tbl_positions <- read_rds_parallel("tbl_positions.rds.gz")
 ```
 
 If `pigz` is unavailable, these functions automatically use standard R gzip

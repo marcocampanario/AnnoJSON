@@ -29,9 +29,17 @@ methods::setMethod(
     )
 
     annotation_version <- .as_character_scalar(
-      header$nirvanaVersion,
+      header$annotator,
       default = "Not available"
     )
+
+    number_of_data_sources <- if (
+      is.null(header$dataSources)
+    ) {
+      NA_integer_
+    } else {
+      NROW(header$dataSources)
+    }
 
     number_of_samples <- if (
       is.null(header$samples) ||
@@ -59,7 +67,8 @@ methods::setMethod(
       "ICAPositions object\n",
       "  Records: ", format_count(number_of_records), "\n",
       "  Genome assembly: ", genome_assembly, "\n",
-      "  ICA version: ", annotation_version, "\n",
+      "  Annotator: ", annotation_version, "\n",
+      "  Data sources: ", format_count(number_of_data_sources), "\n",
       "  Samples: ", format_count(number_of_samples), "\n",
       "  Position columns: ", format_count(number_of_columns), "\n",
       "  Additional columns: ",

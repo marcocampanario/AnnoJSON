@@ -1,26 +1,26 @@
 ---
-title: "Importing Nirvana JSON annotations with GenVarJSON"
-author: "Alysson Henrique Urbanski and Marco Antonio Campanário"
+title: "Importing Illumina Connected Annotations JSON records with AnnoJSON"
+author: "Marco Antonio Campanário and Alysson Henrique Urbanski"
 date: "`r Sys.Date()`"
 output:
   BiocStyle::html_document:
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Importing Nirvana JSON annotations with GenVarJSON}
+  %\VignetteIndexEntry{Importing Illumina Connected Annotations JSON records with AnnoJSON}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, message=FALSE}
-library(GenVarJSON)
+library(AnnoJSON)
 ```
 
 # Overview
 
-Nirvana and Illumina Connected Annotations JSON output is line-oriented:
+Illumina Connected Annotations (former ica) JSON output is line-oriented:
 the first line contains the header and opens the position array, each
 subsequent position occupies one line, and an optional top-level gene array
-follows the position array. `GenVarJSON` uses this organization to avoid
+follows the position array. `AnnoJSON` uses this organization to avoid
 parsing the complete document as one in-memory JSON object.
 
 The package preserves the output structure used by the aPRoVAR
@@ -32,17 +32,17 @@ change row order.
 ```{r sections}
 example_file <- system.file(
     "extdata",
-    "nirvana-example.json",
-    package = "GenVarJSON"
+    "ica-example.json.gz",
+    package = "AnnoJSON"
 )
 
-resultados_ultra_v2 <- read_nirvana_sections(
+parsed_json <- read_ica_sections(
     example_file,
     verbose = FALSE
 )
 
-names(resultados_ultra_v2)
-lengths(resultados_ultra_v2)
+names(parsed_json)
+lengths(parsed_json)
 ```
 
 The result contains one header JSON string, a character vector of position
@@ -52,32 +52,31 @@ top-level gene section returns `character(0)` for `genes`.
 # Parse the records
 
 ```{r parse}
-header <- parse_nirvana_header(resultados_ultra_v2$header)
+header <- parse_ica_header(parsed_json$header)
 
-positions_list <- parse_nirvana_records(
-    resultados_ultra_v2$positions,
+positions_list <- parse_ica_records(
+    parsed_json$positions,
     workers = 1L,
     progress = FALSE
 )
 
-genes_list <- parse_nirvana_records(
-    resultados_ultra_v2$genes,
+genes_list <- parse_ica_records(
+    parsed_json$genes,
     workers = 1L,
     progress = FALSE
 )
 ```
 
 For a large local file, set `workers` to the number of independent R
-processes that is appropriate for the available memory. The package restores
-the previous `future` plan after each parallel call.
+processes that is appropriate for the available memory.
 
 # Create the original aPRoVAR tibbles
 
 ```{r tibbles}
-tbl_inicial <- nirvana_positions_tibble(positions_list)
-tbl_genes <- nirvana_genes_tibble(genes_list)
+tbl_positions <- ica_positions_tibble(positions_list)
+tbl_genes <- ica_genes_tibble(genes_list)
 
-tbl_inicial
+tbl_positions
 tbl_genes
 ```
 
@@ -87,11 +86,11 @@ databases such as `gnomad` and `gnomad-exome` are not combined or discarded.
 # Run the complete import
 
 ```{r one-call}
-result <- read_nirvana_json(
+result <- read_ica_json(
     example_file,
     workers = 1L,
-    progress = FALSE,
-    verbose = FALSE
+    progress = TRUE,
+    verbose = TRUE
 )
 
 names(result)
@@ -100,10 +99,28 @@ names(result)
 # Convert positions to GRanges
 
 ```{r granges}
-ranges <- nirvana_positions_granges(result$tbl_inicial)
+ranges <- ica_positions_granges(result$tbl_positions)
 ranges
 ```
 
 The conversion is an additional representation. It does not modify
-`tbl_inicial`.
+`tbl_positions`.
+
+# Convert positions to ICAPositions
+
+```{r ICAPositions}
+ICAPositions_object <- ICAPositions(
+  positions = parsed_results_master$tbl_positions,
+  header = parsed_results_master$header,
+  metadata = list(
+    source = "ICA JSON",
+    package = "AnnoJSON"
+  )
+)
+
+show(ICAPositions_object)
+```
+
+The conversion is an additional representation. It does not modify
+`tbl_positions`.
 
