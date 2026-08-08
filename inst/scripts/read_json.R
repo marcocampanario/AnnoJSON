@@ -160,3 +160,12 @@ ICAPositions_object <- ICAPositions(
     package = "AnnoJSON"
   )
 )
+
+show(ICAPositions_object)
+positions <- position_data(ICAPositions_object)
+header <- ica_header(ICAPositions_object)
+metadata <- ica_metadata(ICAPositions_object)
+
+# Replacement method
+positions$source_row <- seq_len(nrow(positions))
+position_data(ICAPositions_object) <- positions

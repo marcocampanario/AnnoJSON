@@ -80,3 +80,42 @@ methods::setMethod(
     invisible(object)
   }
 )
+
+#' Replacement method for ICA positions data
+#'
+#' Replaces the position-level data stored in an `ICAPositions` object.
+#' The resulting object is validated before it is returned.
+#'
+#' @param x An `ICAPositions` object.
+#' @param value A [S4Vectors::DataFrame()] containing the required ICA
+#'   position columns. Additional columns are permitted.
+#'
+#' @return The modified `ICAPositions` object.
+#'
+#' @examples
+#' positions <- position_data(ica_object)
+#' positions$source_row <- seq_len(nrow(positions))
+#' position_data(ica_object) <- positions
+#'
+#' @export
+methods::setGeneric(
+  "position_data<-",
+  function(x, value) {
+    methods::standardGeneric("position_data<-")
+  }
+)
+
+#' @rdname position_data-set
+#' @export
+methods::setReplaceMethod(
+  "position_data",
+  signature(
+    x = "ICAPositions",
+    value = "DataFrame"
+  ),
+  function(x, value) {
+    x@positions <- value
+    methods::validObject(x)
+    x
+  }
+)
