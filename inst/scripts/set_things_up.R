@@ -24,6 +24,7 @@ install.packages("gh")
 devtools::load_all('.')
 devtools::document()
 devtools::test()
+
 devtools::install(
   ".",
   upgrade = FALSE

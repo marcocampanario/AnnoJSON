@@ -109,6 +109,13 @@ The conversion is an additional representation. It does not modify
 # Convert positions to ICAPositions
 
 ```{r ICAPositions}
+parsed_results_master <- read_ica_json(
+    example_file,
+    workers = 1L,
+    progress = TRUE,
+    verbose = TRUE
+)
+
 ICAPositions_object <- ICAPositions(
   positions = parsed_results_master$tbl_positions,
   header = parsed_results_master$header,

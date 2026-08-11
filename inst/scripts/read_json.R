@@ -34,14 +34,14 @@ workers <- if (length(arguments) >= 4L) {
 # 1. Read the header, position records, and gene records as JSON strings.
 # -------------------------------------------------------------------------
 
-json_file <- system.file("extdata", "ica-example.json.gz", package = "AnnoJSON")
+library(AnnoJSON)
+json_file <- system.file("extdata", "subset_100_af.json.gz", package = "AnnoJSON")
 output_directory <- "C:/Users/Marco Campanário/Desktop/AnnoJSON_07082026/AnnoJSON/AnnoJSON/inst/extdata/"
 output_prefix <- "TOYDATA-P"
 
 execution_time <- system.time({
     parsed_json <- read_ica_sections(json_file)
 }, gcFirst = TRUE)
-
 print(execution_time)
 
 raw_sections_file <- file.path(
@@ -169,3 +169,6 @@ metadata <- ica_metadata(ICAPositions_object)
 # Replacement method
 positions$source_row <- seq_len(nrow(positions))
 position_data(ICAPositions_object) <- positions
+show(ICAPositions_object)
+
+devtools::test()

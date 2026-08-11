@@ -1,5 +1,5 @@
 library(testthat)
-library(GenVarJSON)
+library(AnnoJSON)
 
-test_check("GenVarJSON")
+test_check("AnnoJSON")
 
