@@ -1,6 +1,6 @@
-# GenVarJSON
+# AnnoJSON
 
-`GenVarJSON` is a Bioconductor-oriented R package for importing the
+`AnnoJSON` is a Bioconductor-oriented R package for importing the
 line-oriented JSON output produced by Nirvana or Illumina Connected
 Annotations. It refactors the aPRoVAR `read_json.R` script into reusable
 functions while preserving the original data structures.
